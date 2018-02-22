@@ -29,14 +29,9 @@ namespace Flexinets.Security
                         var credentials = Encoding.UTF8.GetString(Convert.FromBase64String(authHeaderVal.Parameter)).Split(new[] { ':' });
                         if (credentials[0] == "username" && credentials[1] == "password")
                         {
-                            // do nothing, maybe set user context?
+                            // todo do nothing, maybe set user context if needed...
+                            return Task.CompletedTask;
                         }
-                        else
-                        {
-                            context.HttpContext.Response.Headers.Add("WWW-Authenticate", $"Basic realm=\"{Realm}\"");
-                            context.Result = new UnauthorizedResult();
-                        }
-
                     }
                     catch (Exception ex)
                     {
@@ -44,12 +39,9 @@ namespace Flexinets.Security
                     }
                 }
             }
-            else
-            {
-                context.HttpContext.Response.StatusCode = 401;
-                context.HttpContext.Response.Headers.Add("WWW-Authenticate", $"Basic realm=\"{Realm}\"");
-                context.Result = new UnauthorizedResult();
-            }
+
+            context.HttpContext.Response.Headers.Add("WWW-Authenticate", $"Basic realm=\"{Realm}\"");
+            context.Result = new UnauthorizedResult();
             return Task.CompletedTask;
         }
     }
